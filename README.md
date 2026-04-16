@@ -1,6 +1,6 @@
 <div align="center">
   
-# Think, Then Verify: A Hypothesis–Verification Multi-Agent Framework for Long Video Understanding (CVPR'2026 🔥)
+# Think, Then Verify: A Hypothesis–Verification Multi-Agent Framework for Long Video Understanding (CVPR'2026)
   
 [![Conference](https://img.shields.io/badge/CVPR-2026-FFD93D.svg)](https://cvpr.thecvf.com/Conferences/2026)
 [![Project](https://img.shields.io/badge/Project-NeighborRetr-4D96FF.svg)](https://zzezze.github.io/NeighborRetr/)
