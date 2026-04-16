@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "video-hv"
+version = "0.1.0"
+description = "Hypothesis–verification agent for video multiple-choice QA (VideoHV)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.40.0",
+    "pydantic>=2.0",
+    "numpy>=1.24",
+    "tqdm>=4.65",
+]
+
+[project.scripts]
+video-hv-egoschema-openai = "video_hv.pipelines.egoschema_openai.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["video_hv*"]

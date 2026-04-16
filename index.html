@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="VideoHV-Agent is a novel framework that reformulates long-video understanding as a structured hypothesis–verification process, improving accuracy, interpretability, and efficiency on multiple benchmarks.">
+  <meta name="keywords" content="VideoHV-Agent, Long-Video Understanding, Structured Reasoning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Think, Then Verify: A Hypothesis–Verification Multi-Agent Framework for Long Video Understanding</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro|Roboto:300,400,500,700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.ico">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <style>
+    :root {
+      --primary-color: #4285F4;
+      --primary-dark: #3367D6;
+      --secondary-color: #34A853;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-color: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Roboto', 'Google Sans', sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
+      background-color: white;
+    }
+
+    .pink {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    .logo {
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .navbar {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+    }
+
+    .navbar-item {
+      font-weight: 500;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f0 100%);
+      padding: 3rem 1.5rem;
+    }
+
+    .publication-title {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .publication-authors {
+      margin-bottom: 1.5rem;
+    }
+
+    .author-block {
+      margin: 0 5px;
+    }
+
+    h2.title.is-3 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+
+    h3.title.is-4 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section {
+      padding: 3rem 1.5rem;
+    }
+
+    .section:nth-child(even) {
+      background-color: var(--light-bg);
+    }
+
+    /* Buttons and links */
+    .button.is-dark {
+      background-color: var(--primary-color);
+      transition: all 0.3s ease;
+    }
+
+    .button.is-dark:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .external-link {
+      margin: 0 5px;
+    }
+
+    /* Styling for the figures */
+    .figure-container {
+      margin: 40px 0;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .figure-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .figure-image {
+      max-width: 90%;
+      margin: 0 auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .figure-image:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .figure-caption {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #666;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .smaller-image {
+      max-width: 75%;
+    }
+
+    .medium-image {
+      max-width: 90%;
+    }
+
+    /* Citation style */
+    pre {
+      background-color: #f7f8f9;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #333;
+    }
+
+    /* Footer styling */
+    .footer {
+      background-color: #2c3e50;
+      color: white;
+      padding: 3rem 1.5rem;
+    }
+
+    .footer a {
+      color: #9ac0fd;
+      text-decoration: underline;
+    }
+
+    .footer a:hover {
+      color: white;
+    }
+
+    /* Abstract styling */
+    .abstract-container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    /* Highlight key contributions */
+    .key-points {
+      background-color: rgba(66, 133, 244, 0.1);
+      border-left: 4px solid var(--primary-color);
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 30px 0;
+    }
+
+    .key-points-title {
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    /* Add animation effects */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 768px) {
+      .figure-image, .smaller-image, .medium-image {
+        max-width: 100%;
+      }
+      
+      .abstract-container {
+        padding: 20px;
+      }
+    }
+
+    /* Paper links styling */
+    .publication-links {
+      margin-top: 20px;
+    }
+
+    /* Go to top button */
+    .go-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.3s;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    .go-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .go-top:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+  </style>  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize animations
+      const sections = document.querySelectorAll('.section');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+      
+      // Go to top button functionality
+      const goTopButton = document.querySelector('.go-top');
+      
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          goTopButton.classList.add('visible');
+        } else {
+          goTopButton.classList.remove('visible');
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+
+<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#">
+        <span class="pink">VideoHV-Agent</span>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#abstract">Abstract</a>
+        <a class="navbar-item" href="#hubness">Observation</a>
+        <a class="navbar-item" href="#method">Method</a>
+        <a class="navbar-item" href="#comparative">Experiments</a>
+        <a class="navbar-item" href="#visualization">Visualization</a>
+        <a class="navbar-item" href="#BibTeX">Citation</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title jumbotron-heading">
+            <span class="pink">Think, Then Verify:</span> <span class="pink">A Hypothesis–Verification</span> Multi-Agent Framework for Long Video Understanding
+          </h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <strong>Zheng Wang</strong><sup>1</sup>,</span>
+            <span class="author-block">
+              <strong>Haoran Chen</strong><sup>1</sup>,</span>
+            <span class="author-block">
+              <strong>Haoxuan Qin</strong><sup>1</sup>,</span>
+            <span class="author-block">
+              <strong>Zhipeng Wei</strong><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <strong>Tianwen Qian</strong><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <strong>Cong Bai</strong><sup>1†</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Zhejiang University of Technology,</span>
+            <span class="author-block"><sup>2</sup>East China Normal University,</span><br>
+            <span class="author-block"><sup>3</sup>UC Berkeley</span>
+            <span class="author-block"><sup>†</sup>Corresponding author</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2603.04977"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Project Link -->
+              <span class="link-block">
+                <a href="https://zzezze.github.io/NeighborRetr/"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-globe"></i>
+                  </span>
+                  <span>Project</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/Haorane/VideoHV-Agent"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="abstract" class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="abstract-container">
+          <div class="content has-text-justified">
+            <p>            
+              Long video understanding is challenging due to dense visual redundancy, long-range temporal dependencies, 
+              and the tendency of chain-of-thought and retrieval-based agents to accumulate semantic drift and correlation-driven errors. 
+              We argue that long-video reasoning should begin not with reactive retrieval, but with deliberate task formulation: 
+              the model must first articulate what must be true in the video for each candidate answer to hold. 
+              This thinking-before-finding principle motivates VideoHV-Agent, a framework that reformulates video question answering as a structured hypothesis–verification process.
+              Based on video summaries, a Thinker rewrites answer candidates into testable hypotheses, 
+              a Judge derives a discriminative clue specifying what evidence must be checked, a Verifier grounds and tests the clue using localized, fine-grained video content, 
+              and an Answer agent integrates validated evidence to produce the final answer.
+              Experiments on three long-video understanding benchmarks show that VideoHV-Agent achieves state-of-the-art accuracy while providing enhanced interpretability, 
+              improved logical soundness, and lower computational cost.
+            </p>
+          </div>
+          
+          <div class="figure-container">
+            <img src="./static/images/fig1.png" class="figure-image" alt="Difference between prior agents and VideoHV-Agent">
+            <p class="figure-caption">Figure 1: From correlation-based search to hypothesis verification: prior agents search and aggregate related clips, while VideoHV-Agent verifies testable clues with focused visual evidence.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section id="hubness" class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Hubness Observation</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            Our analysis reveals vanilla CLIP creates a problematic distribution with bad hubs dominating retrieval results. Examining k-occurrence frequency, we observe: (1) bad hubs with large Nk(x) frequently appear in top-15 nearest neighbors, (2) good neighbors distribute across lower frequencies, and (3) many anti-hubs rarely appear in retrievals. NeighborRetr significantly reduces bad hubs, enhances good ones, and minimizes anti-hubs, creating a balanced embedding space better aligned with ground truth.
+          </p>
+          
+          <div class="figure-container">
+            <img src="./static/images/Hub_Observation.png" class="figure-image smaller-image" alt="Distribution of k-occurrence frequency">
+            <p class="figure-caption">Figure 2: Distribution of k-occurrence frequency in CLIP embeddings, demonstrating NeighborRetr's effectiveness in balancing the embedding space by reducing bad hubs and enhancing good neighbors while minimizing anti-hubs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<section id="method" class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method Overview</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            VideoHV-Agent recasts long-video understanding as a hypothesis–verification process, thus achieving “thinking then verify” principle:
+          </p>
+          
+          <div class="columns">
+            <div class="column">
+              <div class="box" style="height: 100%;">
+                <h4 class="title is-5 has-text-centered" style="color: var(--primary-color);">
+                  <i class="fas fa-bullseye mr-2"></i>Context Summarization
+                </h4>
+                <p>
+                  This design preserves detailed information when necessary while keeping the overall context compact and efficient to process.
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box" style="height: 100%;">
+                <h4 class="title is-5 has-text-centered" style="color: var(--primary-color);">
+                  <i class="fas fa-sitemap mr-2"></i>Two-step Reasoning
+                </h4>
+                <p>
+                  Our approach adopts a two-step hypothesis–verification process that first formulates hypotheses beyond coarse summaries and then verifies them with fine-grained visual evidence, enabling accurate and efficient long-video reasoning.
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box" style="height: 100%;">
+                <h4 class="title is-5 has-text-centered" style="color: var(--primary-color);">
+                  <i class="fas fa-balance-scale-right mr-2"></i>Evidence Integration
+                </h4>
+                <p>
+                  In the final stage, the Answer agent integrates validated evidence to re-evaluate candidates and produce the final answer through explicit, evidence-grounded reasoning.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="figure-container">
+            <img src="./static/images/fig2.png" class="figure-image" alt="Overview of the proposed VideoHV-Agent framework.">
+            <p class="figure-caption">Figure 2: Overview of the proposed VideoHV-Agent framework. The framework first (a) summarizes the long video captions, then performs (b) two-step reasoning where a Thinker and a Judge agent rewrite options into hypotheses and a discriminative clue, and a Verifier agent grounds this clue to collect visual evidence, finally an Answer agent integrates the evidence to (c) answer the question.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comparative" class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Comparative Experiments</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            VideoHV-Agent achieved SOTA among zero-shot methods on Egoschema, NextQA and IntentQA datasets.  It shows that video agents perform well on problems such as temporal order understanding, common sense understanding, and character behavior intention. For the NextQA ATP-hard subset, our accuracy improved significantly. VideoHV-Agent is not only effective at solving simple problems, but also performs even better on difficult ones. This demonstrates that VideoHV-Agent has the ability to solve complex problems. This is also consistent with our hypothesis verification method, which focuses more on causal reasoning. VideoHV-Agent shows outstanding performance on both splits, highlighting the robustness of the method.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="case study" class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Case Study</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            we qualitatively demonstrate the effectiveness of VideoHV-Agent. Given multiple possible cloth joint ways, the Thinker formulates testable hypotheses and specifies the visual clue needed to distinguish them. When inspecting early frames (3–8), the Verifier finds insufficient evidence and marks the clue as unverified rather than guessing. In a second round, it examines later frames (31–35), detects clear sewing actions (e.g., illuminated machine, fabric under the presser foot, manual alignment), and reaches a verified judgment consistent with the ground truth. This case demonstrates targeted evidence retrieval, robust uncertainty handling, and transparent reasoning that directly ties visual observations to logical decisions.
+          </p>
+          
+          <div class="figure-container">
+            <img src="./static/images/fig3.png" class="figure-image medium-image" alt="Case Study">
+            <p class="figure-caption">Figure 4: Qualitative study of event understanding in long videos. VideoHV-Agent uses hypothesis–verification to locate decisive evidence, highlighting its ability to avoid search purposefully and ground conclusions in explicit visual proof.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">BibTeX</h2>
+    <pre><code>@misc{wang2026thinkverifyhypothesisverificationmultiagent,
+      title={Think, Then Verify: A Hypothesis-Verification Multi-Agent Framework for Long Video Understanding}, 
+      author={Zheng Wang and Haoran Chen and Haoxuan Qin and Zhipeng Wei and Tianwen Qian and Cong Bai},
+      year={2026},
+      eprint={2603.04977},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2603.04977}, 
+}</code></pre>
+  </div>  
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h3 class="title is-4" style="color: white;">VideoHV-Agent</h3>
+        <p style="margin-bottom: 20px;">
+          A Hypothesis-Verification Multi-Agent Framework for Long Video Understanding
+        </p>
+        <p>
+          Website source based on this <a href="https://github.com/nerfies/nerfies.github.io">source code</a>. We also incorporated design elements from <a href="https://github.com/zzezze/NeighborRetr/tree/main">NeighborRetr</a>.
+        </p>
+        <div class="mt-4">
+          <a href="https://arxiv.org/abs/2603.04977" class="mr-3" title="arXiv"><i class="ai ai-arxiv ai-2x"></i></a>
+          <a href="https://github.com/Haorane/VideoHV-Agent" class="mr-3" title="GitHub"><i class="fab fa-github fa-2x"></i></a>
+          <a href="#" title="Contact"><i class="fas fa-envelope fa-2x"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="go-top">
+  <i class="fas fa-arrow-up"></i>
+</a>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    if ($navbarBurgers.length > 0) {
+      $navbarBurgers.forEach(el => {
+        el.addEventListener('click', () => {
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 70, // Account for fixed navbar
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
